@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
 
@@ -36,5 +37,14 @@ class BlogController(
         val post = Post(title, anons, fullText)
         postRepository.save(post)
         return "redirect:/blog"
+    }
+
+    @GetMapping("/blog/{id}")
+    fun blogDetails(@PathVariable("id") id: Long, model: Model): String {
+        val post = postRepository.findById(id)
+        val res = ArrayList<Post>()
+        post.ifPresent(res::add)
+        model.addAttribute("post", res)
+        return "blog-details"
     }
 }
