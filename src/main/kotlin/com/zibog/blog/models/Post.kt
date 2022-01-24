@@ -6,12 +6,11 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 
 @Entity
-class Post {
+class Post(var title: String?, var anons: String?, var fullText: String?) {
+    constructor() : this(null, null, null)
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     var id: Long? = null
-    var title: String? = null
-    var anons: String? = null
-    var fullText: String? = null
-    val views: Int? = null
+    val views: Int = 0
 }
