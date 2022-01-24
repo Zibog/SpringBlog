@@ -11,9 +11,9 @@
 
 <div class="container mt-5">
     <div th:each="element : ${post}" class="alert alert-info mt-2">
-        <h3 th:text="${element.getTitle()}"/>
-        <p th:text="${element.getFullText()}"/>
-        <p th:text="${element.getViews()}"/>
+        <h3 th:text="${element.getTitle()}"></h3>
+        <p th:text="${element.getFullText()}"></p>
+        <p><b>Views:</b> <span th:text="${element.getViews()}"></span></p>
         <a th:href="'/blog/' + ${element.getId()} + '/edit'" class="btn btn-warning">Edit</a>
         <a th:href="'/blog/' + ${element.getId()} + '/delete'" class="btn btn-warning">Delete</a>
     </div>
