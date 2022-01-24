@@ -51,4 +51,34 @@ class BlogController(
         model.addAttribute("post", res)
         return "blog-details"
     }
+
+    @GetMapping("/blog/{id}/edit")
+    fun blogEdit(@PathVariable("id") id: Long, model: Model): String {
+        if (!postRepository.existsById(id)) {
+            return "redirect:/blog"
+        }
+
+        val post = postRepository.findById(id)
+        val res = ArrayList<Post>()
+        post.ifPresent(res::add)
+        model.addAttribute("post", res)
+        return "blog-edit"
+    }
+
+    @PostMapping("/blog/{id}/edit")
+    fun blogPostEdit(
+        @PathVariable("id") id: Long,
+        @RequestParam title: String,
+        @RequestParam anons: String,
+        @RequestParam fullText: String,
+        model: Model
+    ): String {
+        val post = postRepository.findById(id).orElseThrow()
+        post.title = title
+        post.anons = anons
+        post.fullText = fullText
+        postRepository.save(post)
+
+        return "redirect:/blog/{id}"
+    }
 }
