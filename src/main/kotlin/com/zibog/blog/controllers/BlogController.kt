@@ -81,4 +81,15 @@ class BlogController(
 
         return "redirect:/blog/{id}"
     }
+
+    @PostMapping("/blog/{id}/delete")
+    fun blogPostDelete(
+        @PathVariable("id") id: Long,
+        model: Model
+    ): String {
+        val post = postRepository.findById(id).orElseThrow()
+        postRepository.delete(post)
+
+        return "redirect:/blog"
+    }
 }

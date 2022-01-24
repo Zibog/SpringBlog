@@ -15,7 +15,9 @@
         <p th:text="${element.getFullText()}"></p>
         <p><b>Views:</b> <span th:text="${element.getViews()}"></span></p>
         <a th:href="'/blog/' + ${element.getId()} + '/edit'" class="btn btn-warning">Edit</a>
-        <a th:href="'/blog/' + ${element.getId()} + '/delete'" class="btn btn-warning">Delete</a>
+        <form th:action="'/blog/' + ${element.getId()} + '/delete'" method="post">
+            <button type="submit" class="btn btn-warning">Delete</button>
+        </form>
     </div>
 </div>
 
