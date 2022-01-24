@@ -41,6 +41,10 @@ class BlogController(
 
     @GetMapping("/blog/{id}")
     fun blogDetails(@PathVariable("id") id: Long, model: Model): String {
+        if (!postRepository.existsById(id)) {
+            return "redirect:/blog"
+        }
+
         val post = postRepository.findById(id)
         val res = ArrayList<Post>()
         post.ifPresent(res::add)
