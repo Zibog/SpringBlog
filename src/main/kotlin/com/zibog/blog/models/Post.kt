@@ -12,5 +12,5 @@ class Post(var title: String?, var anons: String?, var fullText: String?) {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     var id: Long? = null
-    val views: Int = 0
+    var views: Int = 0
 }

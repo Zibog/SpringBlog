@@ -48,7 +48,11 @@ class BlogController(
         val post = postRepository.findById(id)
         val res = ArrayList<Post>()
         post.ifPresent(res::add)
+        // Increment views counter
+        res.forEach { elem -> ++elem.views }
         model.addAttribute("post", res)
+        // Update DB
+        postRepository.saveAll(res)
         return "blog-details"
     }
 
