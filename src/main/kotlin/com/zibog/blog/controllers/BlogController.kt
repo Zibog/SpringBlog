@@ -20,12 +20,8 @@ class BlogController(
     private val postRepository: PostRepository
 ) {
     @GetMapping("/blog")
-    suspend fun blogMain(model: Model): String {
-        val posts = runBlocking {
-            withContext(Dispatchers.IO) {
-                postRepository.findAll()
-            }
-        }
+    fun blogMain(model: Model): String {
+        val posts = postRepository.findAll()
         model.addAttribute("posts", posts)
         return "blog-main"
     }
@@ -36,18 +32,14 @@ class BlogController(
     }
 
     @PostMapping("/blog/add")
-    suspend fun blogPostAdd(
+    fun blogPostAdd(
         @RequestParam title: String,
         @RequestParam anons: String,
         @RequestParam fullText: String,
         model: Model
     ): String {
         val post = Post(title, anons, fullText)
-        runBlocking {
-            withContext(Dispatchers.IO) {
-                postRepository.save(post)
-            }
-        }
+        postRepository.save(post)
         return "redirect:/blog"
     }
 
