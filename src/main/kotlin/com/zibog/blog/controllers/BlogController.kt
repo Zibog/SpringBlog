@@ -2,6 +2,9 @@ package com.zibog.blog.controllers
 
 import com.zibog.blog.models.Post
 import com.zibog.blog.repo.PostRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -9,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestParam
+import java.util.*
 
 @Controller
 class BlogController(
@@ -40,29 +44,41 @@ class BlogController(
     }
 
     @GetMapping("/blog/{id}")
-    fun blogDetails(@PathVariable("id") id: Long, model: Model): String {
-        if (!postRepository.existsById(id)) {
-            return "redirect:/blog"
-        }
+    suspend fun blogDetails(@PathVariable("id") id: Long, model: Model): String {
+        var post: Optional<Post> = Optional.empty()
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                if (!postRepository.existsById(id)) {
+                    return@withContext "redirect:/blog"
+                }
 
-        val post = postRepository.findById(id)
+                post = postRepository.findById(id)
+            }
+        }
         val res = ArrayList<Post>()
         post.ifPresent(res::add)
         // Increment views counter
         res.forEach { elem -> ++elem.views }
         model.addAttribute("post", res)
         // Update DB
-        postRepository.saveAll(res)
+        withContext(Dispatchers.IO) {
+            postRepository.saveAll(res)
+        }
         return "blog-details"
     }
 
     @GetMapping("/blog/{id}/edit")
-    fun blogEdit(@PathVariable("id") id: Long, model: Model): String {
-        if (!postRepository.existsById(id)) {
-            return "redirect:/blog"
-        }
+    suspend fun blogEdit(@PathVariable("id") id: Long, model: Model): String {
+        var post: Optional<Post> = Optional.empty()
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                if (!postRepository.existsById(id)) {
+                    return@withContext "redirect:/blog"
+                }
 
-        val post = postRepository.findById(id)
+                post = postRepository.findById(id)
+            }
+        }
         val res = ArrayList<Post>()
         post.ifPresent(res::add)
         model.addAttribute("post", res)
@@ -70,29 +86,37 @@ class BlogController(
     }
 
     @PostMapping("/blog/{id}/edit")
-    fun blogPostEdit(
+    suspend fun blogPostEdit(
         @PathVariable("id") id: Long,
         @RequestParam title: String,
         @RequestParam anons: String,
         @RequestParam fullText: String,
         model: Model
     ): String {
-        val post = postRepository.findById(id).orElseThrow()
-        post.title = title
-        post.anons = anons
-        post.fullText = fullText
-        postRepository.save(post)
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                val post = postRepository.findById(id).orElseThrow()
+                post.title = title
+                post.anons = anons
+                post.fullText = fullText
+                postRepository.save(post)
+            }
+        }
 
         return "redirect:/blog/{id}"
     }
 
     @PostMapping("/blog/{id}/delete")
-    fun blogPostDelete(
+    suspend fun blogPostDelete(
         @PathVariable("id") id: Long,
         model: Model
     ): String {
-        val post = postRepository.findById(id).orElseThrow()
-        postRepository.delete(post)
+        runBlocking {
+            withContext(Dispatchers.IO) {
+                val post = postRepository.findById(id).orElseThrow()
+                postRepository.delete(post)
+            }
+        }
 
         return "redirect:/blog"
     }
