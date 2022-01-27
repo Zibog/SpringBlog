@@ -2,6 +2,7 @@ package com.zibog.blog.controllers
 
 import com.zibog.blog.models.Post
 import com.zibog.blog.repo.PostRepository
+import kotlinx.coroutines.*
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
@@ -17,6 +18,11 @@ class BlogController(
 ) {
     @GetMapping("/blog")
     fun blogMain(model: Model): String {
+        /*val posts = runBlocking {
+                withContext(Dispatchers.IO) {
+                    postRepository.findAll()
+            }
+        }*/
         val posts = postRepository.findAll()
         model.addAttribute("posts", posts)
         return "blog-main"
